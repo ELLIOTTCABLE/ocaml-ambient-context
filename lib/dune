@@ -1,4 +1,9 @@
+(env
+ (dev
+  (flags
+   (:standard -warn-error -A))))
+
 (library
  (name ambient_context)
  (public_name ambient-context)
- (libraries ambient-context.tls))
+ (libraries lwt eio hmap ambient-context.tls ambient-context.atomic))
