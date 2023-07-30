@@ -1,11 +1,12 @@
 module TLS = Ambient_context_tls.Thread_local
 
 let _internal_key : Hmap.t Lwt.key = Lwt.new_key ()
-let[@inline] get_map () = Lwt.get _internal_key
-let[@inline] with_map m cb = Lwt.with_value _internal_key m cb
 let ( let* ) = Option.bind
 
 module M = struct
+  let name = "Storage_eio"
+  let[@inline] get_map () = Lwt.get _internal_key
+  let[@inline] with_map m cb = Lwt.with_value _internal_key (Some m) cb
   let create_key = Hmap.Key.create
 
   let get k =
@@ -19,7 +20,7 @@ module M = struct
         | None -> Hmap.singleton k v
         | Some old_context -> Hmap.add k v old_context
      in
-     with_map (Some new_context) cb
+     with_map new_context cb
 
 
   let without_binding k cb =
@@ -28,7 +29,7 @@ module M = struct
         | None -> Hmap.empty
         | Some old_context -> Hmap.rem k old_context
      in
-     with_map (Some new_context) cb
+     with_map new_context cb
 end
 
 let storage () : Ambient_context.storage = (module M)

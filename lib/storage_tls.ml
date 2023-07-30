@@ -2,11 +2,12 @@ module TLS = Ambient_context_tls.Thread_local
 open Types
 
 let _internal_key : Hmap.t TLS.t = TLS.create ()
-let[@inline] get_map () = TLS.get _internal_key
-let[@inline] with_map m cb = TLS.with_ _internal_key m cb
 let ( let* ) = Option.bind
 
 module M = struct
+  let name = "Storage_tls"
+  let[@inline] get_map () = TLS.get _internal_key
+  let[@inline] with_map m cb = TLS.with_ _internal_key m @@ fun _map -> cb ()
   let create_key = Hmap.Key.create
 
   let get k =
