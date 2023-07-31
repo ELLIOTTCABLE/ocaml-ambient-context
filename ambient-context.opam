@@ -10,6 +10,7 @@ bug-reports: "https://github.com/ELLIOTTCABLE/ocaml-ambient-context/issues"
 depends: [
   "dune" {>= "3.6"}
   "ocaml" {>= "4.08"}
+  "hmap"
   "alcotest" {with-test}
   "bisect_ppx" {with-test}
   "ocaml-lsp-server" {with-dev-setup}

@@ -1,12 +1,13 @@
 module TLS = Ambient_context_tls.Thread_local
+module Fiber = Eio.Fiber
 
-let _internal_key : Hmap.t Lwt.key = Lwt.new_key ()
+let _internal_key : Hmap.t Fiber.key = Fiber.create_key ()
 let ( let* ) = Option.bind
 
 module M = struct
   let name = "Storage_eio"
-  let[@inline] get_map () = Lwt.get _internal_key
-  let[@inline] with_map m cb = Lwt.with_value _internal_key (Some m) cb
+  let[@inline] get_map () = Fiber.get _internal_key
+  let[@inline] with_map m cb = Fiber.with_binding _internal_key m cb
   let create_key = Hmap.Key.create
 
   let get k =

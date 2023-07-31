@@ -20,6 +20,7 @@
  (depends
   (ocaml
    (>= 4.08))
+  hmap
   (alcotest :with-test)
   (bisect_ppx :with-test)
   (ocaml-lsp-server :with-dev-setup)
@@ -36,6 +37,7 @@
  (depends
   (ocaml
    (>= 4.08))
+  ambient-context
   lwt
   (alcotest :with-test)
   (bisect_ppx :with-test)))
@@ -47,6 +49,7 @@
  (depends
   (ocaml
    (>= 5.0))
+  ambient-context
   eio
   (alcotest :with-test)
   (bisect_ppx :with-test)))
