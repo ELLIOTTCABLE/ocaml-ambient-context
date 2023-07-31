@@ -28,7 +28,7 @@ let without_binding k cb =
    Store.without_binding k cb
 
 
-let set_storage_during new_storage cb : unit =
+let with_storage_provider new_storage cb : unit =
    let storage_before = ref @@ Atomic_.get storage in
    while
      let seen = Atomic_.get storage in
