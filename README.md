@@ -22,6 +22,8 @@ The intended usage of this library is in two collaborating components:
 
 The former needs to be able to obtain information from the latter, *without* changing the API presented to intermediate `bar-intermediary-lib` (and equivalently, without changing the function-signatures of intermediate wrappers/callers.)
 
+<a name="as-a-top-level-application"></a>
+
 ### ... as a top-level application
 
 When consuming a library that implements `ambient-context`, you'll have to provide the storage-mechanism relevant to the callsite(s) in your application. This will vary depending on *where* you're calling a library that uses `ambient-context` — that is, whether an asynchronous event-loop exists 'above' your callsite on the stack.
