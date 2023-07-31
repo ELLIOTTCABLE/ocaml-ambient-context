@@ -29,21 +29,25 @@ let without_binding k cb =
 
 
 let set_storage_during new_storage cb : unit =
-   let storage_before = Atomic_.get storage in
+   let storage_before = ref @@ Atomic_.get storage in
    while
-     let cur = Atomic_.get storage in
-     let (module Store : STORAGE) = cur in
-     if cur != default_storage && new_storage != cur then
+     let seen = Atomic_.get storage in
+     let (module Store : STORAGE) = seen in
+     if seen != default_storage && new_storage != seen then
        invalid_arg
          ("ambient-context: storage already configured to be " ^ Store.name
-        ^ " on this stack")
-     else not (Atomic_.compare_and_set storage cur new_storage)
+        ^ " on this stack") ;
+     let success = Atomic_.compare_and_set storage seen new_storage in
+     if success then storage_before := seen ;
+     not success
    do
-     cb () ;
-     while
-       let storage_after = Atomic_.get storage in
-       not (Atomic_.compare_and_set storage storage_after storage_before)
-     do
-       ()
-     done
+     ()
+   done ;
+   cb () ;
+   let restore = !storage_before in
+   while
+     let seen = Atomic_.get storage in
+     not (Atomic_.compare_and_set storage seen restore)
+   do
+     ()
    done
