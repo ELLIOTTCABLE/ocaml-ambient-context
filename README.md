@@ -143,6 +143,31 @@ let http_request ?headers ?body action url =
    (* ... *)
 ```
 
+Contributing
+------------
+
+1. Create an opam switch and install the dependencies:
+
+   ```console
+   $ opam switch create . ocaml.5.0.0 --deps-only --no-install
+
+   # If you have opam >= 2.2
+   $ opam install . --deps-only --with-test --with-dev-setup
+
+   # ... or with opam < 2.2
+   $ opam install . --deps-only --with-test
+   $ opam install ocaml-lsp-server ocamlformat
+   ```
+
+2. Install [pre-commit][], and then configure your checkout:
+
+   ```console
+   $ pre-commit install
+   pre-commit installed at .git/hooks/pre-commit
+   ```
+
+[pre-commit]: <https://pre-commit.com/index.html#install> "Installation instructions for th pre-commit tool"
+
 License
 -------
 

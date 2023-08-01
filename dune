@@ -1,0 +1,4 @@
+(alias
+ (name opam)
+ (deps
+  (glob_files *.opam)))
