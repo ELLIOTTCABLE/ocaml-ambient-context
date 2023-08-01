@@ -1,6 +1,7 @@
 (library
  (name ambient_context_tls)
- (synopsis "Thread-local storage for ambient-context, extracted from ocaml-opentelemetry")
+ (synopsis
+  "Thread-local storage for ambient-context, extracted from ocaml-opentelemetry")
  (public_name ambient-context.tls)
  (modules thread_local)
  (libraries threads ambient-context.atomic))
