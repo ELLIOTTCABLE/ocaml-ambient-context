@@ -27,7 +27,7 @@ let without_binding k cb =
    let (module Store : STORAGE) = Atomic_.get storage in
    Store.without_binding k cb
 
-
+(* Why does this need to be synchronized? *)
 let with_storage_provider new_storage cb : unit =
    let storage_before = ref @@ Atomic_.get storage in
    while
