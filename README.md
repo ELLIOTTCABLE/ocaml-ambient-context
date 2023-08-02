@@ -79,7 +79,7 @@ let () =
 
    Ctx.with_storage_provider (Ambient_context_lwt.storage ()) @@ fun () ->
       Lwt_main.run @@ fun () ->
-      Ctx.with_binding Foo_deep.context_key "my value" @@ fun () ->
+      Ctx.with_binding Foo_deep.header_context_key "some header" @@ fun () ->
          (* This empty [bind] may be necessary; see
             {!Ambient_context_lwt.with_binding}. *)
          Lwt.bind (serve ()) (fun () -> ())
@@ -118,7 +118,7 @@ Use `Ambient_context.create_key` to create an opaque key for the value, and expo
 (* lib/foo_deep.ml *)
 module Ctx = Ambient_context
 
-let context_key : string Ctx.key = Ctx.create_key ()
+let header_context_key : string Ctx.key = Ctx.create_key ()
 
 (* ... *)
 ```
