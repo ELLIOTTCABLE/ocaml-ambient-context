@@ -6,4 +6,4 @@
 (library
  (name ambient_context)
  (public_name ambient-context)
- (libraries hmap ambient-context.tls ambient-context.atomic))
+ (libraries hmap ambient-context.tls))
