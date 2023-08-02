@@ -1,5 +1,4 @@
 module Atomic_ = Ambient_context_atomic.Atomic
-module TLS = Ambient_context_tls.Thread_local
 include Types
 
 type 'a key = 'a Hmap.key
@@ -26,6 +25,7 @@ let with_binding k v cb =
 let without_binding k cb =
    let (module Store : STORAGE) = Atomic_.get storage in
    Store.without_binding k cb
+
 
 (* Why does this need to be synchronized? *)
 let with_storage_provider new_storage cb : unit =
