@@ -1,6 +1,7 @@
 (library
- (name storage_eio)
+ (name ambient_context_eio)
  (synopsis
   "Storage backend for ambient-context using Eio's fibre-local storage")
  (public_name ambient-context-eio)
+ (optional)
  (libraries eio ambient-context ambient-context.tls))
