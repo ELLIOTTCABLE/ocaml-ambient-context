@@ -17,6 +17,7 @@ let get k =
    Store.get k
 
 
+(* Why is bind neccessary to set a value? *)
 let with_binding k v cb =
    let (module Store : STORAGE) = Atomic_.get storage in
    Store.with_binding k v cb
