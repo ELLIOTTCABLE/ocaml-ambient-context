@@ -33,15 +33,17 @@ let without_binding k cb =
 
 let with_storage_provider new_storage cb : unit =
    let storage_before = get_current_storage () in
-   let (module Store : STORAGE) = storage_before in
-   if new_storage != default_storage then
-     invalid_arg
-       ("ambient-context: storage already configured to be " ^ Store.name
-      ^ " on this stack") ;
-   try
-     let rv = cb () in
-     TLS.set current_storage_key storage_before ;
-     rv
-   with exn ->
-     TLS.set current_storage_key storage_before ;
-     raise exn
+   if new_storage = storage_before then cb ()
+   else
+     let (module Store : STORAGE) = storage_before in
+     if storage_before != default_storage && new_storage != default_storage then
+       invalid_arg
+         ("ambient-context: storage already configured to be " ^ Store.name
+        ^ " on this stack") ;
+     try
+       let rv = cb () in
+       TLS.set current_storage_key storage_before ;
+       rv
+     with exn ->
+       TLS.set current_storage_key storage_before ;
+       raise exn
