@@ -40,6 +40,7 @@ let with_storage_provider new_storage cb : unit =
        invalid_arg
          ("ambient-context: storage already configured to be " ^ Store.name
         ^ " on this stack") ;
+     TLS.set current_storage_key new_storage ;
      try
        let rv = cb () in
        TLS.set current_storage_key storage_before ;
