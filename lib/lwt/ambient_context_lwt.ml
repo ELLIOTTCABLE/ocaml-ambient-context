@@ -1,5 +1,3 @@
-module TLS = Ambient_context_tls.Thread_local
-
 let _internal_key : Hmap.t Lwt.key = Lwt.new_key ()
 let ( let* ) = Option.bind
 
