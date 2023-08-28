@@ -1,7 +1,21 @@
 module TLS = Ambient_context_tls.Thread_local
+module Atomic = Ambient_context_atomic.Atomic
 include Types
 
-type 'a key = 'a Hmap.key
+type 'a key = int * 'a Hmap.key
+
+let debug =
+   match Sys.getenv_opt "OCAML_AMBIENT_CONTEXT_DEBUG" with
+   | Some ("1" | "true") -> true
+   | _ -> false
+
+
+let id = Atomic.make 0
+
+let generate_debug_id () =
+   let prev = Atomic.fetch_and_add id 1 in
+   prev + 1
+
 
 let compare_key = ( - )
 let default_storage = Storage_tls.storage ()
@@ -13,38 +27,69 @@ let get_current_storage () =
 
 let create_key () =
    let (module Store : STORAGE) = get_current_storage () in
-   Store.create_key ()
-
-
-let get k =
-   let (module Store : STORAGE) = get_current_storage () in
-   Store.get k
-
-
-let with_binding k v cb =
-   let (module Store : STORAGE) = get_current_storage () in
-   Store.with_binding k v cb
-
-
-let without_binding k cb =
-   let (module Store : STORAGE) = get_current_storage () in
-   Store.without_binding k cb
-
-
-let with_storage_provider new_storage cb : unit =
-   let storage_before = get_current_storage () in
-   if new_storage = storage_before then cb ()
+   if not debug then (0, Store.create_key ())
    else
-     let (module Store : STORAGE) = storage_before in
-     if storage_before != default_storage && new_storage != default_storage then
+     let id = generate_debug_id () in
+     Printf.printf "%s: create_key %i\n%!" Store.name id ;
+     (id, Store.create_key ())
+
+
+let get (id, k) =
+   let (module Store : STORAGE) = get_current_storage () in
+   if not debug then Store.get k
+   else
+     let rv = Store.get k in
+     (match rv with
+     | Some _ -> Printf.printf "%s: get %i -> Some\n%!" Store.name id
+     | None -> Printf.printf "%s: get %i -> None\n%!" Store.name id) ;
+     rv
+
+
+let with_binding : 'a key -> 'a -> (unit -> 'r) -> 'r =
+  fun (id, k) v cb ->
+   let (module Store : STORAGE) = get_current_storage () in
+   if not debug then Store.with_binding k v cb
+   else (
+     Printf.printf "%s: with_binding %i enter\n%!" Store.name id ;
+     let rv = Store.with_binding k v cb in
+     Printf.printf "%s: with_binding %i exit\n%!" Store.name id ;
+     rv)
+
+
+let without_binding (id, k) cb =
+   let (module Store : STORAGE) = get_current_storage () in
+   if not debug then Store.without_binding k cb
+   else (
+     Printf.printf "%s: without_binding %i enter\n%!" Store.name id ;
+     let rv = Store.without_binding k cb in
+     Printf.printf "%s: without_binding %i exit\n%!" Store.name id ;
+     rv)
+
+
+let with_storage_provider store_new cb : unit =
+   let store_before = get_current_storage () in
+   if store_new = store_before then cb ()
+   else
+     let (module Store_before : STORAGE) = store_before in
+     let (module Store_new : STORAGE) = store_new in
+     if store_before != default_storage && store_new != default_storage then
        invalid_arg
-         ("ambient-context: storage already configured to be " ^ Store.name
-        ^ " on this stack") ;
-     TLS.set current_storage_key new_storage ;
+         ("ambient-context: cannot configure " ^ Store_new.name
+        ^ ", storage already configured to be " ^ Store_before.name ^ " on this stack") ;
+     TLS.set current_storage_key store_new ;
      try
+       if debug then
+         Printf.printf "with_storage_provider %s enter (previously %s)\n%!"
+           Store_before.name Store_new.name ;
        let rv = cb () in
-       TLS.set current_storage_key storage_before ;
+       if debug then
+         Printf.printf "with_storage_provider %s exit (restoring %s)\n%!"
+           Store_before.name Store_new.name ;
+       TLS.set current_storage_key store_before ;
        rv
      with exn ->
-       TLS.set current_storage_key storage_before ;
+       if debug then
+         Printf.printf "with_storage_provider %s exn (restoring %s)\n%!" Store_before.name
+           Store_new.name ;
+       TLS.set current_storage_key store_before ;
        raise exn
