@@ -47,7 +47,7 @@ When consuming a library that implements `ambient-context`, you'll have to provi
  (executable
   (name widget_app)
 - (libraries bar-intermediary-lib))
-+ (libraries ambient-context ambient-context.lwt bar-intermediary-lib))
++ (libraries ambient-context ambient-context-lwt bar-intermediary-lib))
 ```
 
 At runtime, your application needs to dictate the relevant storage backend (TLS, Lwt, or Eio) for a delineated section of the stack — usually, this involves wrapping the invocation of your asynchronous thread-scheduler's runloop:
