@@ -37,7 +37,8 @@
  (depends
   (ocaml
    (>= 4.08))
-  ambient-context
+  (ambient-context
+   (= :version))
   lwt
   (alcotest :with-test)
   (bisect_ppx :with-test)))
@@ -49,7 +50,8 @@
  (depends
   (ocaml
    (>= 5.0))
-  ambient-context
+  (ambient-context
+   (= :version))
   eio
   (alcotest :with-test)
   (bisect_ppx :with-test)))
