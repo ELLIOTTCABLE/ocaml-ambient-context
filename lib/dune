@@ -6,4 +6,6 @@
 (library
  (name ambient_context)
  (public_name ambient-context)
+ (virtual_modules ambient_context)
+ (default_implementation ambient-context.unix)
  (libraries hmap ambient-context.tls))
