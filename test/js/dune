@@ -1,0 +1,4 @@
+(melange.emit
+ (target output)
+ (module_systems es6)
+ (libraries ambient-context ambient-context-melange))

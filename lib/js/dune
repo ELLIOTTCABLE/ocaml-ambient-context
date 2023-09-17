@@ -1,0 +1,8 @@
+(library
+ (name ambient_context_melange)
+ (synopsis
+  "Storage backend for ambient-context using Zone.js in Melange / JavaScript projects")
+ (public_name ambient-context-melange)
+ (optional)
+ (modes melange)
+ (libraries ambient-context))

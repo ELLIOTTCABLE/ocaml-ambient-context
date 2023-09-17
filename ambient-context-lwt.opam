@@ -8,7 +8,7 @@ license: "MIT"
 homepage: "https://github.com/ELLIOTTCABLE/ocaml-ambient-context"
 bug-reports: "https://github.com/ELLIOTTCABLE/ocaml-ambient-context/issues"
 depends: [
-  "dune" {>= "3.6"}
+  "dune" {>= "3.10"}
   "ocaml" {>= "4.08"}
   "ambient-context" {= version}
   "lwt"

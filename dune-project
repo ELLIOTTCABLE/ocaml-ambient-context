@@ -1,4 +1,6 @@
-(lang dune 3.6)
+(lang dune 3.10)
+
+(using melange 0.1)
 
 (name ambient-context)
 
@@ -55,4 +57,18 @@
   eio
   (alcotest :with-test)
   (alcotest-lwt :with-test)
+  (bisect_ppx :with-test)))
+
+(package
+ (name ambient-context-melange)
+ (synopsis
+  "Storage backend for ambient-context using Zone.js in Melange / JavaScript projects")
+ (depends
+  (ocaml
+   (>= 5.1.0))
+  (ambient-context
+   (= :version))
+  (melange
+   (>= 2.0.0))
+  (alcotest :with-test)
   (bisect_ppx :with-test)))
