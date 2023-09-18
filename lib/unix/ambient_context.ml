@@ -66,30 +66,11 @@ let without_binding (id, k) cb =
      rv)
 
 
-let with_storage_provider store_new cb =
+let set_storage_provider store_new =
    let store_before = get_current_storage () in
-   if store_new = store_before then cb ()
-   else
+   if store_new == store_before then () else TLS.set current_storage_key store_new ;
+   if debug then
      let (module Store_before : STORAGE) = store_before in
      let (module Store_new : STORAGE) = store_new in
-     if store_before != default_storage && store_new != default_storage then
-       invalid_arg
-         ("ambient-context: cannot configure " ^ Store_new.name
-        ^ ", storage already configured to be " ^ Store_before.name ^ " on this stack") ;
-     TLS.set current_storage_key store_new ;
-     try
-       if debug then
-         Printf.printf "with_storage_provider %s enter (previously %s)\n%!"
-           Store_before.name Store_new.name ;
-       let rv = cb () in
-       if debug then
-         Printf.printf "with_storage_provider %s exit (restoring %s)\n%!"
-           Store_before.name Store_new.name ;
-       TLS.set current_storage_key store_before ;
-       rv
-     with exn ->
-       if debug then
-         Printf.printf "with_storage_provider %s exn (restoring %s)\n%!" Store_before.name
-           Store_new.name ;
-       TLS.set current_storage_key store_before ;
-       raise exn
+     Printf.printf "set_storage_provider %s (previously %s)\n%!" Store_new.name
+       Store_before.name
