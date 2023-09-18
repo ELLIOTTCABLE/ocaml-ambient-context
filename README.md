@@ -61,8 +61,8 @@ let () =
    let serve = create_server sock in
 
    (* add this line before [Lwt_main.run]: *)
-   Ctx.with_storage_provider (Ambient_context_lwt.storage ()) @@ fun () ->
-      Lwt_main.run @@ serve ()
+   Ctx.set_storage_provider (Ambient_context_lwt.storage ()) ;
+   Lwt_main.run @@ serve ()
 ```
 
 To communicate with transitive dependencies, you need an opaque `key` — these are usually created and exposed by your transitive dependency.
@@ -77,12 +77,12 @@ let () =
    let sock = create_socket () in
    let serve = create_server sock in
 
-   Ctx.with_storage_provider (Ambient_context_lwt.storage ()) @@ fun () ->
-      Lwt_main.run @@ fun () ->
-      Ctx.with_binding Foo_deep.context_key "my value" @@ fun () ->
-         (* This empty [bind] may be necessary; see
-            {!Ambient_context_lwt.with_binding}. *)
-         Lwt.bind (serve ()) (fun () -> ())
+   Ctx.set_storage_provider (Ambient_context_lwt.storage ()) ;
+   Lwt_main.run @@ fun () ->
+   Ctx.with_binding Foo_deep.context_key "my value" @@ fun () ->
+      (* This empty [bind] may be necessary; see
+         {!Ambient_context_lwt.with_binding}. *)
+      Lwt.bind (serve ()) (fun () -> ())
 ```
 
 > [!NOTE]
