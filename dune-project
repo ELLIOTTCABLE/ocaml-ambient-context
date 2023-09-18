@@ -54,4 +54,5 @@
    (= :version))
   eio
   (alcotest :with-test)
+  (alcotest-lwt :with-test)
   (bisect_ppx :with-test)))
