@@ -4,7 +4,7 @@ type storage = (module STORAGE)
 
 val default_storage : Types.storage
 val get_current_storage : unit -> Types.storage
-val with_storage_provider : Types.storage -> (unit -> unit) -> unit
+val with_storage_provider : Types.storage -> (unit -> 'ret) -> 'ret
 
 type 'a key
 

@@ -66,7 +66,7 @@ let without_binding (id, k) cb =
      rv)
 
 
-let with_storage_provider store_new cb : unit =
+let with_storage_provider store_new cb =
    let store_before = get_current_storage () in
    if store_new = store_before then cb ()
    else
