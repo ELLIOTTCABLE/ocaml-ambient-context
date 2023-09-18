@@ -20,7 +20,6 @@
  (depends
   (ocaml
    (>= 4.08))
-  hmap
   (alcotest :with-test)
   (bisect_ppx :with-test)
   (ocaml-lsp-server :with-dev-setup)

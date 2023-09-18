@@ -1,5 +1,7 @@
 module type STORAGE = Types.STORAGE
 
+module Hmap = Ambient_context_hmap.Hmap
+
 type storage = (module STORAGE)
 
 val default_storage : Types.storage

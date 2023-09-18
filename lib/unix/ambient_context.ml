@@ -1,4 +1,5 @@
 module TLS = Ambient_context_tls.Thread_local
+module Hmap = Ambient_context_hmap.Hmap
 module Atomic = Ambient_context_atomic.Atomic
 include Types
 

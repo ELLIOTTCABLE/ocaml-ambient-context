@@ -1,4 +1,5 @@
 module TLS = Ambient_context_tls.Thread_local
+module Hmap = Ambient_context_hmap.Hmap
 module Fiber = Eio.Fiber
 
 let _internal_key : Hmap.t Fiber.key = Fiber.create_key ()

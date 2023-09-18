@@ -1,3 +1,5 @@
+module Hmap = Ambient_context.Hmap
+
 let _internal_key : Hmap.t Lwt.key = Lwt.new_key ()
 let ( let* ) = Option.bind
 

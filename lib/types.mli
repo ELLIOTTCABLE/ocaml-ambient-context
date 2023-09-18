@@ -1,4 +1,4 @@
-module Hmap = Ambient_context_hmap.Hmap
+module Hmap := Ambient_context_hmap.Hmap
 
 type 'a key = 'a Hmap.key
 
