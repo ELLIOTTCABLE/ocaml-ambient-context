@@ -74,8 +74,7 @@ let with_storage_provider store_new cb : unit =
      let (module Store_new : STORAGE) = store_new in
      if store_before != default_storage && store_new != default_storage then
        invalid_arg
-         ("ambient-context: cannot configure " ^ Store_new.name
-        ^ ", storage already configured to be " ^ Store_before.name ^ " on this stack") ;
+         (Printf.sprintf "ambient-context: cannot configure %s, storage already configured to be %s on this stack" Store_new.name Store_before.name ) ;
      TLS.set current_storage_key store_new ;
      try
        if debug then
