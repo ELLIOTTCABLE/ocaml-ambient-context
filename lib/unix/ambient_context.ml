@@ -1,7 +1,7 @@
-module TLS = Ambient_context_tls.Thread_local
+module TLS = Ambient_context_thread_local.Thread_local
 module Hmap = Ambient_context_hmap.Hmap
 module Atomic = Ambient_context_atomic.Atomic
-include Types
+include Ambient_context_core.Types
 
 type 'a key = int * 'a Hmap.key
 
@@ -19,7 +19,7 @@ let generate_debug_id () =
 
 
 let compare_key = ( - )
-let default_storage = Storage_tls.storage ()
+let default_storage = Ambient_context_tls.storage ()
 let current_storage_key : storage TLS.t = TLS.create ()
 
 let get_current_storage () =

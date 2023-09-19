@@ -2,4 +2,7 @@
  (name ambient_context_unix)
  (public_name ambient-context.unix)
  (implements ambient_context)
- (libraries ambient-context.hmap ambient-context.tls))
+ (libraries
+  ambient-context.hmap
+  ambient-context.thread_local
+  ambient-context.tls))

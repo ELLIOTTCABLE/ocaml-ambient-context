@@ -1,0 +1,4 @@
+(library
+ (name ambient_context_core)
+ (public_name ambient-context.core)
+ (libraries ambient-context.hmap))

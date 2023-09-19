@@ -1,11 +1,6 @@
-(env
- (dev
-  (flags
-   (:standard -warn-error -A))))
-
 (library
  (name ambient_context)
  (public_name ambient-context)
  (virtual_modules ambient_context)
  (default_implementation ambient-context.unix)
- (libraries ambient-context.hmap ambient-context.tls))
+ (libraries ambient-context.hmap ambient-context.core))

@@ -1,3 +1,5 @@
+module Types := Ambient_context_core.Types
+
 module type STORAGE = Types.STORAGE
 
 module Hmap = Ambient_context_hmap.Hmap

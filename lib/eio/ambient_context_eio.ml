@@ -1,4 +1,4 @@
-module TLS = Ambient_context_tls.Thread_local
+module TLS = Ambient_context_thread_local.Thread_local
 module Hmap = Ambient_context_hmap.Hmap
 module Fiber = Eio.Fiber
 
