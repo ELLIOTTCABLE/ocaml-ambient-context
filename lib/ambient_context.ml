@@ -17,8 +17,8 @@ let generate_debug_id () =
    prev + 1
 
 
-let compare_key = ( - )
-let default_storage = Storage_tls.storage ()
+let compare_key : int -> int -> int = Stdlib.compare
+let default_storage : storage = Storage_tls.storage ()
 let current_storage_key : storage TLS.t = TLS.create ()
 
 let get_current_storage () =
@@ -74,7 +74,10 @@ let with_storage_provider store_new cb : unit =
      let (module Store_new : STORAGE) = store_new in
      if store_before != default_storage && store_new != default_storage then
        invalid_arg
-         (Printf.sprintf "ambient-context: cannot configure %s, storage already configured to be %s on this stack" Store_new.name Store_before.name ) ;
+         (Printf.sprintf
+            "ambient-context: cannot configure %s, storage already configured to be %s \
+             on this stack"
+            Store_new.name Store_before.name) ;
      TLS.set current_storage_key store_new ;
      try
        if debug then
