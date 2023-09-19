@@ -53,3 +53,6 @@ let suite =
        test_case "can set storage provider" `Quick test_set_storage_provider;
        test_case "test sequenced storage" `Slow test_sequenced_storage;
      ]
+
+
+let () = Lwt_main.run @@ Alcotest_lwt.run "Unix" [ ("all", suite) ]

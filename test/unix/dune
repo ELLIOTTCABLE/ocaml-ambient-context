@@ -1,13 +1,6 @@
-(env
- (dev
-  (flags
-   (:standard -warn-error -A))))
-
 (test
  (name test_unix)
+ (package ambient-context)
  (libraries
-  ambient-context-lwt
   ambient-context.unix
-  lwt.unix
-  alcotest
-  alcotest-lwt))
+  alcotest))

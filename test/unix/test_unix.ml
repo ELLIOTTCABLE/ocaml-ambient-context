@@ -7,12 +7,9 @@ let basics =
      ]
 
 
-let test_suite_sync (s : (string * Alcotest_lwt.speed_level * (unit -> unit)) list) :
-    unit Alcotest_lwt.test_case list =
-   s |> List.map @@ fun (name, speed, f) -> Alcotest_lwt.test_case_sync name speed f
+let test_suite_sync (s : (string * Alcotest.speed_level * (unit -> unit)) list) :
+    unit Alcotest.test_case list =
+   s |> List.map @@ fun (name, speed, f) -> Alcotest.test_case name speed f
 
 
-let () =
-   Lwt_main.run
-   @@ Alcotest_lwt.run "Unix"
-        [ ("Basics", test_suite_sync basics); ("all", Test_lwt.suite) ]
+let () = Alcotest.run "Unix" [ ("Basics", test_suite_sync basics) ]
