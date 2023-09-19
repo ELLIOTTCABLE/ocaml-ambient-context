@@ -55,3 +55,18 @@
   (alcotest :with-test)
   (alcotest-lwt :with-test)
   (bisect_ppx :with-test)))
+
+(package
+ (name ambient-context-jsoo)
+ (synopsis
+  "Implementation of ambient-context for js_of_ocaml")
+ (depends
+  (ocaml
+   (>= 4.08))
+  (ambient-context
+   (= :version))
+  js_of_ocaml
+  js_of_ocaml-ppx
+  js_of_ocaml-compiler
+  (alcotest :with-test)
+  (bisect_ppx :with-test)))

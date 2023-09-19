@@ -1,0 +1,6 @@
+(executable
+ (name test_jsoo)
+ (modes js)
+ (libraries ambient-context-jsoo)
+ (preprocess
+  (pps js_of_ocaml-ppx)))

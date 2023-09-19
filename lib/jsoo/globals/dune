@@ -1,0 +1,7 @@
+(library
+ (name ambient_context_JSOO_globals)
+ (synopsis
+  "Storage backend for ambient-context-jsoo using JavaScript globals")
+ (public_name ambient-context-jsoo.globals)
+ (optional)
+ (libraries ambient-context.core ambient-context.hmap))

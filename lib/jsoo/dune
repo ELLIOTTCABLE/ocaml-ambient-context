@@ -1,0 +1,7 @@
+(library
+ (name ambient_context_jsoo)
+ (public_name ambient-context-jsoo)
+ (implements ambient_context)
+ (libraries ambient-context js_of_ocaml ambient-context-jsoo.globals)
+ (preprocess
+  (pps js_of_ocaml-ppx)))
