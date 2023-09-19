@@ -6,4 +6,5 @@
 (library
  (name ambient_context)
  (public_name ambient-context)
+ (synopsis "Abstraction over thread-local storage and continuation-local storage mechanisms")
  (libraries hmap ambient-context.tls))
