@@ -30,12 +30,11 @@ module M = struct
 
 
   let without_binding k cb =
-     let new_context =
-        match get_map () with
-        | None -> Hmap.empty
-        | Some old_context -> Hmap.rem k old_context
-     in
-     with_map new_context @@ fun _context -> cb ()
+     match get_map () with
+     | None -> cb ()
+     | Some old_context ->
+         let new_context = Hmap.rem k old_context in
+         with_map new_context @@ fun _context -> cb ()
 end
 
 let storage () : Ambient_context_core.Types.storage = (module M)
