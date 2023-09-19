@@ -1,9 +1,27 @@
-
 (** Ambient context.
 
-    The ambient context, like the Matrix, is everywhere around you *)
+    The ambient context, like the Matrix, is everywhere around you.
+
+    It is responsible for keeping track of that context in a manner that's consistent with
+    the program's choice of control flow paradigm:
+
+    - for synchronous/threaded/direct style code, {b TLS} ("thread local storage") keeps
+      track of a global variable per thread. Each thread has its own copy of the variable
+      and updates it independently of other threads.
+
+    - for Lwt, any ['a Lwt.t] created inside the [with_binding k v (fun _ -> …)] will
+      inherit the [k := v] assignment.
+
+    - for Eio, fibers created inside [with_binding k v (fun () -> …)] will inherit the
+      [k := v] assignment. This is consistent with the structured concurrency approach of
+      Eio.
+
+    The only data stored by this storage is a {!Hmap.t}, ie a heterogeneous map. Various
+    users (libraries, user code, etc.) can create their own {!key} to store what they are
+    interested in, without affecting other parts of the storage. *)
 
 module Types := Ambient_context_core.Types
+
 module type STORAGE = Types.STORAGE
 
 module Hmap = Ambient_context_hmap.Hmap
