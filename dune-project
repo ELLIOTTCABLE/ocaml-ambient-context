@@ -27,7 +27,9 @@
    (and
     :with-dev-setup
     (>= 0.24)
-    (< 0.25)))))
+    (< 0.25))))
+  (depopts
+    hmap))
 
 (package
  (name ambient-context-lwt)

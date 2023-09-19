@@ -1,5 +1,5 @@
 module TLS = Ambient_context_thread_local.Thread_local
-module Hmap = Ambient_context_hmap.Hmap
+module Hmap = Ambient_context_core.Ambient_context_hmap
 
 let _internal_key : Hmap.t TLS.t = TLS.create ()
 

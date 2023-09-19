@@ -1,4 +1,7 @@
 (library
  (name ambient_context_core)
  (public_name ambient-context.core)
- (libraries ambient-context.hmap))
+ (libraries
+   (select ambient_context_hmap.ml from
+     (hmap -> ambient_context_hmap.real.ml)
+     (     -> ambient_context_hmap.vendored.ml))))

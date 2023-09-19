@@ -16,6 +16,7 @@ depends: [
   "ocamlformat" {with-dev-setup & >= "0.24" & < "0.25"}
   "odoc" {with-doc}
 ]
+depopts: ["hmap"]
 build: [
   ["dune" "subst"] {dev}
   [

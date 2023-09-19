@@ -3,7 +3,7 @@
     There is a singleton storage for a given program, responsible for providing ambient
     context to the rest of the program. *)
 
-module Hmap = Ambient_context_hmap.Hmap
+module Hmap = Ambient_context_hmap
 
 type 'a key = 'a Hmap.key
 

@@ -1,6 +1,0 @@
-(library
- (name ambient_context_hmap)
- (synopsis
-  "Thread-local storage for ambient-context, extracted from ocaml-opentelemetry")
- (public_name ambient-context.hmap)
- (modules hmap))
