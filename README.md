@@ -9,6 +9,8 @@ As a library author, depending on `ambient-context` allows you to
 2. while still being compatible with dependants who are calling into you from an asynchronous context (like Lwt or Eio),
 3. *without* functorizing your interface over (or even depending on!) specifically Lwt or Eio, or preventing non-Lwt/Eio users from consuming your API.
 
+Simply put, `ambient-context` allows you to communicate with your dependants in situations where you cannot control intermediate dependencies, and cannot modify the API of your own library to accept a new parameter.
+
 > [!WARNING]
 > Ambient context like this — effectively, implicit global state — is usually frowned upon for most uses, and with good reason. This module is *intended* to be used as a last resort, and exclusively for debugging, tracing, and reporting purposes, if at all possible.
 
@@ -17,82 +19,93 @@ Installation and usage ...
 
 The intended usage of this library is in two collaborating components:
 
-1. that of a "deep in the dependency-tree" library `foo-deep-lib`,
-2. and a top-of-the-dependency-tree `widget-app`.
+1. that of a "deep in the dependency-tree" library (e.g. `foo-deep-lib`),
+2. and a top-of-the-dependency-tree (e.g. `widget-app`).
 
-The former needs to be able to obtain information from the latter, *without* changing the API presented to intermediate `bar-intermediary-lib` (and equivalently, without changing the function-signatures of intermediate wrappers/callers.)
+The former needs to be able to obtain information from the latter, *without* changing the API presented to intermediate dependencies (e.g. `bar-intermediary-lib`) — and equivalently, without changing the function-signatures of intermediate wrappers/callers.
 
 <a name="as-a-top-level-application"></a>
 
 ### ... as a top-level application
 
-When consuming a library that implements `ambient-context`, you'll have to provide the storage-mechanism relevant to the callsite(s) in your application. This will vary depending on *where* you're calling a library that uses `ambient-context` — that is, whether an asynchronous event-loop exists 'above' your callsite on the stack.
+If a library you depend on (let's pretend it's `foo-deep-lib`) uses `ambient-context`, they're effectively deferring an important decision about _how_ their library communicates with you.
 
-**Example:** if you're writing an Lwt-enabled application, and you'll be calling `bar-intermediary-lib` below the `Lwt_main.run` event-loop on the stack, you'll need to install the `ambient-context-lwt` "storage provider":
+_This means you must to choose, and configure, a storage-mechanism relevant to the callsite(s) in your own application._
 
-```diff
- ; dune-project
-  (depends
-   (ocaml
-    (>= 4.08))
-+  ambient-context
-+  ambient-context-lwt
-   bar-intermediary-lib
-   (alcotest :with-test)
-   (ocaml-lsp-server :with-dev-setup)
-```
+Your choice will vary depending on *from where*, in your own code, you're calling into a library that uses `ambient-context` — that is, whether an asynchronous event-loop (such as Lwt or Eio) exists 'above' your calls on the stack. Having determined whether you'll be calling your dependancy (e.g. `foo-deep-lib`) from such an asynchronous context , you'll then need to install the relevant storage-provider at runtime with an appropriately-placed call to `Ambient_context.set_storage_provider`.
 
-```diff
- ; src/dune
- (executable
-  (name widget_app)
-- (libraries bar-intermediary-lib))
-+ (libraries ambient-context ambient-context-lwt bar-intermediary-lib))
-```
+> **Example:** if you're writing an Lwt-enabled application, and you'll be calling `bar-intermediary-lib` below the `Lwt_main.run` event-loop on the stack, you'll need to install the `ambient-context-lwt` "storage provider" ...
+>
+> ```diff
+>  ; dune-project
+>   (depends
+>    (ocaml
+>     (>= 4.08))
+> +  ambient-context.unix
+> +  ambient-context-lwt
+>    bar-intermediary-lib
+>    (alcotest :with-test)
+>    (ocaml-lsp-server :with-dev-setup)
+> ```
+>
+> ```diff
+>  ; src/dune
+>  (executable
+>   (name widget_app)
+> - (libraries bar-intermediary-lib))
+> + (libraries ambient-context.unix ambient-context-lwt bar-intermediary-lib))
+> ```
+>
+> ... and at runtime, your application will need to dictate the relevant storage backend (TLS, Lwt, or Eio) for a delineated section of the stack — usually, this involves wrapping the invocation of your asynchronous thread-scheduler's runloop — in this example, `Lwt_main.run`:
+>
+> ```ocaml
+> (* src/widget_app.ml *)
+> module Ctx = Ambient_context
+>
+> let () =
+>    let sock = create_socket () in
+>    let serve = create_server sock in
+>
+>    (* add this line before [Lwt_main.run]: *)
+>    Ctx.set_storage_provider (Ambient_context_lwt.storage ()) ;
+>    Lwt_main.run @@ serve ()
+> ```
 
-At runtime, your application needs to dictate the relevant storage backend (TLS, Lwt, or Eio) for a delineated section of the stack — usually, this involves wrapping the invocation of your asynchronous thread-scheduler's runloop:
+Once your application has configured the appropriate runtime context-storage, you'll presumably need to actually _use_ the ambient context in your calls to `foo-deep-lib`.
 
-```ocaml
-(* src/widget_app.ml *)
-module Ctx = Ambient_context
+To communicate with transitive dependencies, you need an opaque `key` — these are usually created and exposed by your transitive dependency; see its documentation.
 
-let () =
-   let sock = create_socket () in
-   let serve = create_server sock in
+You can provide ambient values to the transitive dependency via calls to `Ambient_context.with_binding`; which takes that opaque `key`, the new `value` you want to set, and then a callback.
 
-   (* add this line before [Lwt_main.run]: *)
-   Ctx.set_storage_provider (Ambient_context_lwt.storage ()) ;
-   Lwt_main.run @@ serve ()
-```
+> **Example:** In our Lwt-enabled application, assuming `foo-deep-lib` takes advantage of the ambient context to communicate about a header it wants to add to HTTP requests, we can set that header in our application's top-level context, and it will be available to `foo-deep-lib`'s calls to `Curl`:
+>
+> ```ocaml
+> (* src/widget_app.ml *)
+> module Ctx = Ambient_context
+>
+> let () =
+>    let sock = create_socket () in
+>    let serve = create_server sock in
+>
+>    Ctx.set_storage_provider (Ambient_context_lwt.storage ()) ;
+>    Lwt_main.run @@ fun () ->
+>    Ctx.with_binding Foo_deep.header_context_key "my header value" @@ fun () ->
+>       (* This empty [bind] may be necessary; see
+>          {!Ambient_context_lwt.with_binding}. *)
+>       Lwt.bind (serve ()) (fun () -> ())
+> ```
 
-To communicate with transitive dependencies, you need an opaque `key` — these are usually created and exposed by your transitive dependency.
+Refer to your dependency's documentation for specific instructions on how to provide the ambient context they expect.
 
-You can provide ambient values to the transitive dependency via calls to `Ambient_context.with_binding`; this takes that opaque `key`, the new `value` you want to set, and then a callback:
-
-```ocaml
-(* src/widget_app.ml *)
-module Ctx = Ambient_context
-
-let () =
-   let sock = create_socket () in
-   let serve = create_server sock in
-
-   Ctx.set_storage_provider (Ambient_context_lwt.storage ()) ;
-   Lwt_main.run @@ fun () ->
-   Ctx.with_binding Foo_deep.context_key "my value" @@ fun () ->
-      (* This empty [bind] may be necessary; see
-         {!Ambient_context_lwt.with_binding}. *)
-      Lwt.bind (serve ()) (fun () -> ())
-```
-
+<!-- FIXME: v3.ocaml.org links for the backends' documentation -->
 > [!NOTE]
-> The precise semantics of `with_binding` depend on the chosen storage-backend; refer to your backend's documentation.
+> The precise semantics of `with_binding` depend on the chosen storage-backend; refer to your chosen backend's documentation.
 
 ### ... as a library
 
 This library allows you to avoid depending on, or functorizing over, `Lwt.t`. In the most basic usage, you simply provide a `Ambient_context.key`, direct your consumers to the [above documentation](#as-a-top-level-application) and then anywhere in your API, you can pull the value 'currently' assigned to your key out of the ambient-context.
 
-You need depend only on `ambient-context` itself, *not* `ambient-context-lwt` or the like:
+You need depend only on `ambient-context` itself, *not* `ambient-context-lwt`, or even `lwt` itself:
 
 ```diff
  ; dune-project
@@ -118,12 +131,12 @@ Use `Ambient_context.create_key` to create an opaque key for the value, and expo
 (* lib/foo_deep.ml *)
 module Ctx = Ambient_context
 
-let context_key : string Ctx.key = Ctx.create_key ()
+let header_context_key : string Ctx.key = Ctx.create_key ()
 
 (* ... *)
 ```
 
-Then, anywhere you like, you should be able to obtain the value assigned to `Foo_deep.context_key` by the consuming application up-stack from you:
+Then, anywhere you like, you should be able to obtain the value assigned to `Foo_deep.header_context_key` by the consuming application up-stack from you:
 
 ```ocaml
 (* lib/foo_deep.ml *)
