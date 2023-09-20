@@ -3,5 +3,4 @@
  (synopsis
   "Storage backend for ambient-context using Lwt's sequence-associated storage")
  (public_name ambient-context-lwt)
- (optional)
  (libraries lwt ambient-context ambient-context.tls))

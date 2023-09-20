@@ -18,7 +18,7 @@ let generate_debug_id () =
    prev + 1
 
 
-let compare_key = ( - )
+let compare_key : int -> int -> int = Stdlib.compare
 let default_storage = Ambient_context_tls.storage ()
 let current_storage_key : storage TLS.t = TLS.create ()
 
