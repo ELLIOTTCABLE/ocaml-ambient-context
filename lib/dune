@@ -2,6 +2,7 @@
  (name ambient_context)
  (public_name ambient-context)
  (virtual_modules ambient_context)
- (synopsis "Abstraction over thread-local storage and continuation-local storage mechanisms")
+ (synopsis
+  "Abstraction over thread-local storage and continuation-local storage mechanisms")
  (default_implementation ambient-context.unix)
  (libraries ambient-context.core))

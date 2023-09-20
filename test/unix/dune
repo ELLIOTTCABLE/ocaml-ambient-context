@@ -1,6 +1,4 @@
 (test
  (name test_unix)
  (package ambient-context)
- (libraries
-  ambient-context.unix
-  alcotest))
+ (libraries ambient-context.unix alcotest))
