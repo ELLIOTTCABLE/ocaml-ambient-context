@@ -8,7 +8,7 @@ on:
 
 jobs:
    run:
-      name: build
+      name: build w/ only TLS
       strategy:
          fail-fast: true
          matrix:

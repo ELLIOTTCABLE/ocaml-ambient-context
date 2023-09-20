@@ -8,7 +8,7 @@ on:
 
 jobs:
    run:
-      name: build
+      name: build w/ Lwt
       strategy:
          fail-fast: true
          matrix:
