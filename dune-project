@@ -16,20 +16,20 @@
 (package
  (name ambient-context)
  (synopsis
-  "Abstraction over thread-local storage and continuation-local storage mechanisms")
+  "Abstraction over thread-local / continuation-local storage mechanisms for communication with transitive dependencies")
  (depends
   (ocaml
    (>= 4.08))
   (alcotest :with-test)
   (bisect_ppx :with-test)
+  (odig :with-doc)
   (ocaml-lsp-server :with-dev-setup)
   (ocamlformat
    (and
     :with-dev-setup
     (>= 0.24)
     (< 0.25))))
-  (depopts
-    hmap))
+ (depopts hmap))
 
 (package
  (name ambient-context-lwt)
@@ -48,7 +48,7 @@
 (package
  (name ambient-context-eio)
  (synopsis
-  "Storage backend for ambient-context using Lwt's sequence-associated storage")
+  "Storage backend for ambient-context using Eio's continuation-local storage")
  (depends
   (ocaml
    (>= 5.0))
