@@ -55,4 +55,4 @@ let suite =
      ]
 
 
-let () = Lwt_main.run @@ Alcotest_lwt.run "Unix" [ ("all", suite) ]
+let () = Lwt_main.run @@ Alcotest_lwt.run "Unix" [ ("Lwt", suite) ]
