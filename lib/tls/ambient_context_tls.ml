@@ -1,5 +1,6 @@
+module Types = Ambient_context_types
+module Hmap = Ambient_context_types.Hmap
 module TLS = Ambient_context_thread_local.Thread_local
-module Hmap = Ambient_context_core.Ambient_context_hmap
 
 let _internal_key : Hmap.t TLS.t = TLS.create ()
 
@@ -37,4 +38,4 @@ module M = struct
          with_map new_context @@ fun _context -> cb ()
 end
 
-let storage () : Ambient_context_core.Types.storage = (module M)
+let storage () : Types.storage = (module M)

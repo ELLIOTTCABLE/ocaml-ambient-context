@@ -1,8 +1,12 @@
 (library
  (name ambient_context)
  (public_name ambient-context)
- (virtual_modules ambient_context)
  (synopsis
   "Abstraction over thread-local storage and continuation-local storage mechanisms")
- (default_implementation ambient-context.unix)
- (libraries ambient-context.core))
+ (libraries
+  ambient-context.types
+  (select
+   ambient_context.ml
+   from
+   (threads ambient-context.tls -> ambient_context.threads.ml)
+   (-> ambient_context.ref.ml))))

@@ -20,17 +20,17 @@
     users (libraries, user code, etc.) can create their own {!key} to store what they are
     interested in, without affecting other parts of the storage. *)
 
-module Types := Ambient_context_core.Types
+module Types := Ambient_context_types
 
 module type STORAGE = Types.STORAGE
 
-module Hmap = Ambient_context_core.Ambient_context_hmap
+module Hmap = Ambient_context_types.Hmap
 
 type storage = (module STORAGE)
 
-val default_storage : Types.storage
-val get_current_storage : unit -> Types.storage
-val set_storage_provider : Types.storage -> unit
+val default_storage : storage
+val get_current_storage : unit -> storage
+val set_storage_provider : storage -> unit
 
 type 'a key
 (** A key that can be mapped to values of type ['a] in the ambient context. *)

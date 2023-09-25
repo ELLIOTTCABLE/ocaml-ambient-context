@@ -1,6 +1,6 @@
 (library
- (name ambient_context_core)
- (public_name ambient-context.core)
+ (name ambient_context_types)
+ (public_name ambient-context.types)
  (libraries
   (select
    ambient_context_hmap.ml
