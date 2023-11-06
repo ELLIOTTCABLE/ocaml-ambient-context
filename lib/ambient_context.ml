@@ -1,5 +1,5 @@
 include Ambient_context_types
-module MS = Metastorage
+module Metastorage = Metastorage
 module Atomic = Ambient_context_atomic.Atomic
 
 type 'a key = int * 'a Hmap.key
@@ -21,7 +21,7 @@ let create_key () =
    let (module Store : STORAGE) = get_current_storage () in
    if not debug then (0, Store.create_key ())
    else
-     let id = MS.generate_debug_id () in
+     let id = Metastorage.generate_debug_id () in
      Printf.printf "%s: create_key %i\n%!" Store.name id ;
      (id, Store.create_key ())
 

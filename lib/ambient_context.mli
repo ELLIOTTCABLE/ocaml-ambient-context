@@ -52,3 +52,5 @@ val with_binding : 'a key -> 'a -> (unit -> 'r) -> 'r
 val without_binding : 'a key -> (unit -> 'b) -> 'b
 (** [without_binding k cb] calls [cb()] in a context where [k] has no binding (possibly
     shadowing the current ambient binding of [k] if it exists). *)
+
+module Metastorage = Metastorage
