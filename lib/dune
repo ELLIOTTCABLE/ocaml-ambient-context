@@ -6,7 +6,7 @@
  (libraries
   ambient-context.types
   (select
-   ambient_context.ml
+   metastorage.ml
    from
-   (threads ambient-context.tls -> ambient_context.threads.ml)
-   (-> ambient_context.ref.ml))))
+   (threads ambient-context.tls -> metastorage.threads.ml)
+   (-> metastorage.ref.ml))))

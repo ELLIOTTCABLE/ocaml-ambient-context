@@ -1,5 +1,5 @@
 include Ambient_context_types
-module TLS = Ambient_context_thread_local.Thread_local
+module MS = Metastorage
 module Atomic = Ambient_context_atomic.Atomic
 
 type 'a key = int * 'a Hmap.key
@@ -10,26 +10,18 @@ let debug =
    | _ -> false
 
 
-let id = Atomic.make 0
-
-let generate_debug_id () =
-   let prev = Atomic.fetch_and_add id 1 in
-   prev + 1
-
-
 let compare_key : int -> int -> int = Stdlib.compare
 let default_storage = Ambient_context_tls.storage ()
-let current_storage_key : storage TLS.t = TLS.create ()
 
 let get_current_storage () =
-   TLS.get_or_create ~create:(fun () -> default_storage) current_storage_key
+   Metastorage.get_or_create_current_storage ~create:(fun () -> default_storage) ()
 
 
 let create_key () =
    let (module Store : STORAGE) = get_current_storage () in
    if not debug then (0, Store.create_key ())
    else
-     let id = generate_debug_id () in
+     let id = MS.generate_debug_id () in
      Printf.printf "%s: create_key %i\n%!" Store.name id ;
      (id, Store.create_key ())
 
@@ -68,7 +60,7 @@ let without_binding (id, k) cb =
 
 let set_storage_provider store_new =
    let store_before = get_current_storage () in
-   if store_new == store_before then () else TLS.set current_storage_key store_new ;
+   if store_new == store_before then () else Metastorage.set_current_storage store_new ;
    if debug then
      let (module Store_before : STORAGE) = store_before in
      let (module Store_new : STORAGE) = store_new in
