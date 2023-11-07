@@ -1,0 +1,3 @@
+(executable
+ (name "test_lwt_leak")
+ (libraries ambient-context-lwt lwt.unix))
