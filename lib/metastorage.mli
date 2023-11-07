@@ -1,8 +1,15 @@
 module Types := Ambient_context_types
 
-val generate_debug_id : unit -> int
+type 'a t
 
-val get_or_create_current_storage :
-  create:(unit -> Types.storage) -> unit -> Types.storage
+val create : unit -> 'a t
+val get_or_create : create:(unit -> 'a) -> 'a t -> 'a
+val set : 'a t -> 'a -> unit
 
-val set_current_storage : Types.storage -> unit
+module Monotonic : sig
+  type t
+
+  val create : int -> t
+  val get : t -> int
+  val incr : t -> unit
+end

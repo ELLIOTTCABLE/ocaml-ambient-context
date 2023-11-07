@@ -10,18 +10,27 @@ let debug =
    | _ -> false
 
 
+let id = Metastorage.Monotonic.create 0
+
+let generate_debug_id () =
+   let open Metastorage.Monotonic in
+   incr id ;
+   get id
+
+
 let compare_key : int -> int -> int = Stdlib.compare
 let default_storage = Ambient_context_tls.storage ()
+let current_storage_key : storage Metastorage.t = Metastorage.create ()
 
 let get_current_storage () =
-   Metastorage.get_or_create_current_storage ~create:(fun () -> default_storage) ()
+   Metastorage.get_or_create ~create:(fun () -> default_storage) current_storage_key
 
 
 let create_key () =
    let (module Store : STORAGE) = get_current_storage () in
    if not debug then (0, Store.create_key ())
    else
-     let id = Metastorage.generate_debug_id () in
+     let id = generate_debug_id () in
      Printf.printf "%s: create_key %i\n%!" Store.name id ;
      (id, Store.create_key ())
 
@@ -60,7 +69,7 @@ let without_binding (id, k) cb =
 
 let set_storage_provider store_new =
    let store_before = get_current_storage () in
-   if store_new == store_before then () else Metastorage.set_current_storage store_new ;
+   if store_new == store_before then () else Metastorage.set current_storage_key store_new ;
    if debug then
      let (module Store_before : STORAGE) = store_before in
      let (module Store_new : STORAGE) = store_new in
