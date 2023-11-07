@@ -1,22 +1,22 @@
-include Ambient_context_types
+type 'a t = 'a option ref
 
-let id = ref 0
+let create () = ref None
 
-let generate_debug_id () =
-   incr id ;
-   !id
-
-
-(* TODO: replace with noop store *)
-let current_storage : storage option ref = ref None
-
-let get_or_create_current_storage ~create () =
-   match !current_storage with
-   | Some s -> s
+let get_or_create ~create t =
+   match !t with
+   | Some v -> v
    | None ->
-       let s = create () in
-       current_storage := Some s ;
-       s
+       let v = create () in
+       t := Some v ;
+       v
 
 
-let set_current_storage s = current_storage := Some s
+let set t v = t := Some v
+
+module Monotonic = struct
+  type t = int ref
+
+  let create i = ref i
+  let get t = !t
+  let incr = incr
+end

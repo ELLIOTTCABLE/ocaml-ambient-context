@@ -1,5 +1,3 @@
-module Types := Ambient_context_types
-
 type 'a t
 
 val create : unit -> 'a t
