@@ -15,8 +15,13 @@ end
 module WeakIntTbl = Ephemeron.K1.Make (BoxedInt)
 
 let counter = Mref.Monotonic.create 0
-let dislocated_store_key : Hmap.t Mref.t = Mref.create ()
-let dislocated_store : Hmap.t WeakIntTbl.t = WeakIntTbl.create 50
+let dislocated_store_key : Hmap.t WeakIntTbl.t Mref.t = Mref.create ()
+let create_dislocated_store : unit -> Hmap.t WeakIntTbl.t = fun () -> WeakIntTbl.create 50
+
+let get_dislocated_store () =
+   Mref.get_or_create ~create:create_dislocated_store dislocated_store_key
+
+
 let _internal_key : BoxedInt.t Lwt.key = Lwt.new_key ()
 
 let debug =
@@ -33,7 +38,7 @@ let next () =
 
 let stats_summary () =
    let Hashtbl.{ num_bindings; num_buckets; max_bucket_length; bucket_histogram = _ } =
-      WeakIntTbl.stats_alive dislocated_store
+      WeakIntTbl.stats_alive @@ get_dislocated_store ()
    in
    Printf.sprintf "%i/%i@%i" num_bindings num_buckets max_bucket_length
 
@@ -43,12 +48,12 @@ module M = struct
 
   let get_map () =
      let* id = Lwt.get _internal_key in
-     WeakIntTbl.find_opt dislocated_store id
+     WeakIntTbl.find_opt (get_dislocated_store ()) id
 
 
   let with_map m cb =
      let id = next () in
-     WeakIntTbl.replace dislocated_store id m ;
+     WeakIntTbl.replace (get_dislocated_store ()) id m ;
      if debug then (
        let i = id.i in
        let finaliser () =
