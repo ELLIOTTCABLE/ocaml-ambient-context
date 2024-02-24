@@ -14,10 +14,13 @@ depends: [
   "bisect_ppx" {with-test}
   "odig" {with-doc}
   "ocaml-lsp-server" {with-dev-setup}
-  "ocamlformat" {with-dev-setup & >= "0.24" & < "0.25"}
+  "ocamlformat" {with-dev-setup & = "0.26"}
   "odoc" {with-doc}
 ]
-depopts: ["hmap"]
+depopts: [
+  "hmap"
+  "thread-local-storage" {>= "0.1"}
+]
 build: [
   ["dune" "subst"] {dev}
   [

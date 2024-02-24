@@ -37,8 +37,8 @@ jobs:
          - run: opam exec -- dune build @install --only-packages=ambient-context
          - run: opam exec -- dune runtest --only-packages=ambient-context
 
-         # now redo it with hmap installed
-         - run: opam install hmap
+         # now redo it with depopts installed
+         - run: opam install hmap thread-local-storage
 
          - run: opam exec -- dune build @install --only-packages=ambient-context
          - run: opam exec -- dune runtest --only-packages=ambient-context

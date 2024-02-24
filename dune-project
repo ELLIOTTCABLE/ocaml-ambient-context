@@ -27,9 +27,10 @@
   (ocamlformat
    (and
     :with-dev-setup
-    (>= 0.24)
-    (< 0.25))))
- (depopts hmap))
+    (= 0.26))))
+ (depopts
+   hmap
+   (thread-local-storage (>= 0.1))))
 
 (package
  (name ambient-context-lwt)
