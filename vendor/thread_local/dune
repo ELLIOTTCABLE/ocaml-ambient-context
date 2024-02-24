@@ -4,4 +4,6 @@
   "Thread-local storage for ambient-context, extracted from ocaml-opentelemetry")
  (public_name ambient-context.thread_local)
  (modules thread_local)
- (libraries threads ambient-context.atomic))
+ (libraries threads ambient-context.atomic (select thread_local.ml from
+                                                   (thread-local-storage -> thread_local.fast.ml)
+                                                   (-> thread_local.simple.ml))))
